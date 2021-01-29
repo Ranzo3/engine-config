@@ -62,9 +62,11 @@ TIMEZONE=$8  #Timezones are like Europe/Rome, America/New_York, UTC, Asia/Tokyo,
 ENGTYPE=$9 # Must be VIRTUALIZATION or MASKING
 
 
-URL=http://${DE}
+URL=https://${DE}
 SYSADMIN_USR=sysadmin
 SYSADMIN_DEFAULT_PASSWD=sysadmin
+ADMIN_USR=admin
+ADMIN_DEFAULT_PASSWD=admin
 
 export URL
 
@@ -170,30 +172,10 @@ read -r -d '' PAYLOAD <<EOF
 EOF
 post "\${APICALL}" "\${PAYLOAD}"
 
-echo "Set new password for admin"
-APICALL="resources/json/delphix/user/USER-2/updateCredential"
-read -r -d '' PAYLOAD <<EOF
-{
-			"type": "CredentialUpdateParameters",
-			"newCredential": {
-					"type": "PasswordCredential",
-					"password": "$ADMIN_NEW_PASSWD"
-			}
-}
-EOF
-post "\${APICALL}" "\${PAYLOAD}"
 
 
-echo "Set admin to not ask for new password after change"
-APICALL="resources/json/delphix/user/USER-2"
-read -r -d '' PAYLOAD <<EOF
-	{
-			"type": "User",
-			"passwordUpdateRequested": false,
-			"emailAddress": "$ADMIN_EMAILADDRESS"
-	}
-EOF
-post "\${APICALL}" "\${PAYLOAD}"
+
+
 
 
 echo "Grab a list of disk devices"
@@ -366,8 +348,65 @@ read -r -d '' PAYLOAD <<EOF
 EOF
 post "\${APICALL}" "\${PAYLOAD}"
 
+
+
 #SMTP
 #LDAP
+#Phone Home
+#Proxy
+
+
+
+echo "Creating API Session"
+APICALL="resources/json/delphix/session"
+read -r -d '' PAYLOAD <<EOF
+{
+    "type": "APISession",
+    "version": {
+        "type": "APIVersion",
+        "major": 1,
+        "minor": 11,
+        "micro": 0
+    }
+}
+EOF
+post "\${APICALL}" "\${PAYLOAD}"
+
+
+echo "Authenticating to $DE..."
+APICALL="resources/json/delphix/login"
+read -r -d '' PAYLOAD <<EOF
+{
+        "type": "LoginRequest",
+        "username": "$ADMIN_USR",
+        "password": "$ADMIN_DEFAULT_PASSWD"
+}
+EOF
+post "\${APICALL}" "\${PAYLOAD}"
+
+echo "Set new password for admin"
+APICALL="resources/json/delphix/user/USER-2/updateCredential"
+read -r -d '' PAYLOAD <<EOF
+{
+			"type": "CredentialUpdateParameters",
+			"newCredential": {
+					"type": "PasswordCredential",
+					"password": "$ADMIN_NEW_PASSWD"
+			}
+}
+EOF
+post "\${APICALL}" "\${PAYLOAD}"
+
+echo "Set admin to not ask for new password after change"
+APICALL="resources/json/delphix/user/USER-2"
+read -r -d '' PAYLOAD <<EOF
+	{
+			"type": "User",
+			"passwordUpdateRequested": false,
+			"emailAddress": "$ADMIN_EMAILADDRESS"
+	}
+EOF
+post "\${APICALL}" "\${PAYLOAD}"
 
 
 
