@@ -130,7 +130,7 @@ echo $ABOUT | grep '"configured":true'
 if [ $? == 0 ]; then
 	echo
 	echo $1 is already configured aborting.;
-	#exit 1
+	exit 1
 fi
 
 
