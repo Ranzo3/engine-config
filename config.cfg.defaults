@@ -1,0 +1,17 @@
+SYSADMIN_NEW_PASSWD=sysadmin
+SYSADMIN_EMAILADDRESS=test@test.com
+ADMIN_NEW_PASSWD=admin
+ADMIN_EMAILADDRESS=test@test.com
+#You can specify multiple servers with quotes: "timesvr1.me.com,timesvr2.me.com"
+NTPSERVER=Pool.ntp.org
+#Timezones are like Europe/Rome, America/New_York, UTC, Asia/Tokyo, etc.
+TIMEZONE=America/New_York
+# Must be VIRTUALIZATION or MASKING
+ENGTYPE=VIRTUALIZATION
+SMTP_SERVER=mail.test.com
+SMTP_PORT=25
+LDAP_SERVER=ldap.test.com
+LDAP_PORT=389
+PROXY_SERVER=proxy.test.com
+PROXY_USERNAME=testuser
+PROXY_PASSWORD=testpword
