@@ -30,36 +30,14 @@
 #
 # Prerequisites:
 #   Delphix Engine should have already OVA/AMI/Cloud Image loaded and should have Network  configured with an IP assigned to it.
-#   This script does not handle networking:  DHCP On/Off, Static IP, Hostname, DNS, Gateway, DHCP
+#   This script does not handle networking:  DHCP On/Off, Static IP, Hostname, DNS, Gateway, DHCP, MTU
 #
-# Usage
-#   ./configure_engine.sh <DELPHIX_ENGINE_IP> <DELPHIX_HOSTNAME> <SYSADMIN_NEW_PASSWD> <SYSADMIN_EMAILADDRESS> <ADMIN_NEW_PASSWD> <ADMIN_EMAILADDRESS> <NTP_SERVER(S)> <TIME_ZONE> <ENGINE_TYPE>
 #
-#	ENGINE_TYPE could be VIRTUALIZATION or MASKING
-#
-# Example
-#   ./configure_engine.sh 172.16.126.153 DelphixEngine sysadminpw m@m.com adminpw m@m.com "timesvr1.me.com, timesvr2.me.com" "America/New_York" MASKING
 #================================================================================
 #
 
 
-
-
-
-# The guest running this script should have curl binary
-
-###############################
-#         Var section         #
-###############################
-# DE=$1
-# HOSTNAME=$2
-# SYSADMIN_NEW_PASSWD=$3
-# SYSADMIN_EMAILADDRESS=$4
-# ADMIN_NEW_PASSWD=$5
-# ADMIN_EMAILADDRESS=$6
-# NTPSERVER=$7  #You can specify multiple servers with quotes: "timesvr1.me.com,timesvr2.me.com"
-# TIMEZONE=$8  #Timezones are like Europe/Rome, America/New_York, UTC, Asia/Tokyo, etc.
-# ENGTYPE=$9 # Must be VIRTUALIZATION or MASKING
+# The guest running this script should have curl binary and bash
 
 
 SYSADMIN_USR=sysadmin
@@ -68,9 +46,6 @@ ADMIN_USR=admin
 ADMIN_DEFAULT_PASSWD=admin
 
 source config.shlib
-
-#export URL
-
 
 # Use curl to POST an API CALL. Checks success, reports and exists the script upon error.
 function post
@@ -374,7 +349,23 @@ function set_webproxy
 
 function usage
 {
-	echo "Usage..."
+	echo "Usage"
+	echo " ./configure_engine.sh [-c] [-a] [-t] [-m] [-l] [-k] [-w] [-d] [-h] <DELPHIX_ENGINE_IP>"
+	echo "	-h: Help (Display this message)"
+	echo "	-c: Configure only.  Skip disk intialization, new passwords, registration, and engine type"
+	echo "	-a: Configure ALL.  Same as \"-tmlkw\" "
+	echo "	-t: Configure Time"
+	echo "	-m: Configure eMail"
+	echo "	-l: Configure LDAP"
+	echo "	-k: Configure Kerberos"
+	echo "	-w: Configure Web Proxy"
+	echo "	-d: DEBUG.  Print extra info"
+	echo
+	echo "The script requires one positional argument DELPHIX_ENGINE_IP"
+	echo "The script uses a hardcoded config file called config.cfg.  Place your settings there."
+	echo "Example:"
+	echo "   ./configure_engine.sh 172.16.126.153"
+	echo "   # Configures the engine at this IP, using parameters in config.cfg"
 }
 
 function debug
@@ -467,7 +458,7 @@ shift $((OPTIND-1))
 #Define Mandatory Parameters
 
 if [ $# -ne 1 ]; then
-	echo "You must provide one arguments:  IP Address (or resolvable hostname) of DE"
+	echo "You must provide one argument:  IP Address (or resolvable hostname) of DE"
 	exit_abnormal
 fi
 
