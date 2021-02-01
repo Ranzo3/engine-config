@@ -162,8 +162,8 @@ function initialize
 	echo
 	POSTDEVICES="{\"type\": \"SystemInitializationParameters\",\"defaultUser\":\"admin\", \"defaultPassword\": \"$ADMIN_NEW_PASSWD\", \"devices\": ["
 
-	disks=`curl -s -X GET ${URL}/resources/json/delphix/storage/device -b ~/cookies.txt -H "Content-Type: application/json"`
-	#echo $disks
+	disks=`curl -s -k -l -X GET ${URL}/resources/json/delphix/storage/device -b ~/cookies.txt -H "Content-Type: application/json"`
+	debug "DISKS: "$disks
 
 	# line split
 	lines=`echo $disks | cut -d "[" -f2 | cut -d "]" -f1 | awk -v RS='},{' -F: '{print $0}'`
@@ -195,6 +195,7 @@ function initialize
 	echo "The storage pool is being configured and management services restarting, I will wait 2 minutes and reconnect"
 	for ((i = 10; i > 0; --i)); do
 		printf "$i "
+		sleep 12
 	done
 
 	echo "Login as SYSADMIN with DEFAULT PASSWORD"
