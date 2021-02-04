@@ -45,7 +45,7 @@ SYSADMIN_DEFAULT_PASSWD=sysadmin
 ADMIN_USR=admin
 ADMIN_DEFAULT_PASSWD=admin
 
-source config.shlib
+source ./config.shlib
 
 # Use curl to POST an API CALL. Checks success, reports and exists the script upon error.
 function post
